@@ -60,11 +60,17 @@ exports.handler = async function (event, context) {
     const result = await res.json();
 
     if (!res.ok) {
-      return {
-        statusCode: res.status,
-        body: JSON.stringify({ error: "Failed to create secret", detail: result })
-      };
-    }
+  const errorText = await res.text();
+  return {
+    statusCode: res.status,
+    body: JSON.stringify({
+      error: "Failed to create secret",
+      status: res.status,
+      text: errorText
+    })
+  };
+}
+
 
     ipLog.push(ip);
     saveIpLog(ipLog);
