@@ -18,11 +18,16 @@ export async function handler(event, context) {
     });
 
     if (!res.ok) {
-      return {
-        statusCode: res.status,
-        body: JSON.stringify({ error: "Failed to create scrt.link" })
-      };
-    }
+  const errorText = await res.text(); // capture full API response
+  return {
+    statusCode: res.status,
+    body: JSON.stringify({
+      error: "Failed to create scrt.link",
+      detail: errorText
+    })
+  };
+}
+
 
     const data = await res.json();
     return {
