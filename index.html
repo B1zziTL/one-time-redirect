@@ -24,8 +24,9 @@
       });
 
       document.getElementById("message").textContent = "One-time link created!";
-      document.getElementById("output").innerHTML = `<a href="${result.url}" target="_blank">${result.url}</a>`;
-      console.log(result);
+      console.log("scrt.link result:", result);
+      document.getElementById("output").textContent = JSON.stringify(result, null, 2);
+
     } catch (error) {
       document.getElementById("message").textContent = "❌ Failed to create link.";
       console.error(error);
