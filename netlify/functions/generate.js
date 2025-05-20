@@ -57,21 +57,26 @@ exports.handler = async function (event, context) {
       })
     });
 
-    const result = await res.json();
+    const rawText = await res.text();
+    let result;
+
+    try {
+      result = JSON.parse(rawText);
+    } catch {
+      result = { raw: rawText };
+    }
 
     if (!res.ok) {
-  const errorText = await res.text();
-  return {
-    statusCode: res.status,
-    body: JSON.stringify({
-      error: "Failed to create secret",
-      status: res.status,
-      text: errorText
-    })
-  };
-}
-
-
+      return {
+        statusCode: res.status,
+        body: JSON.stringify({
+        error: "Failed to create secret",
+        status: res.status,
+        detail: result
+      })
+    };
+  }
+    
     ipLog.push(ip);
     saveIpLog(ipLog);
 
