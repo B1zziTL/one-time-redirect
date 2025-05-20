@@ -12,8 +12,17 @@
     #code {
       font-size: 2rem;
       font-weight: bold;
-      margin-top: 1rem;
+      margin: 1rem 0;
       color: #2c3e50;
+    }
+    #link {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+    }
+    a {
+      color: #0077cc;
+      text-decoration: none;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -21,13 +30,23 @@
   <h1>One-Time Access Code</h1>
   <p id="message">Checking your access...</p>
   <div id="code"></div>
+  <div id="link"></div>
 
   <script>
+    const QUIZ_URL = "https://www.flexiquiz.com/SC/N/8e9790e3-ae28-46ef-9d08-a62e712f90fc";
+
     fetch("/.netlify/functions/otp")
       .then(res => res.json())
       .then(data => {
         document.getElementById("message").textContent = data.message;
         document.getElementById("code").textContent = data.code || "";
+
+        if (data.code) {
+          document.getElementById("link").innerHTML = `
+            <p>You may now proceed to the quiz:</p>
+            <a href="${QUIZ_URL}" target="_blank">${QUIZ_URL}</a>
+          `;
+        }
       })
       .catch(err => {
         console.error(err);
