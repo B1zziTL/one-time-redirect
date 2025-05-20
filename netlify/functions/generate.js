@@ -1,6 +1,4 @@
-// netlify/functions/generate.js
-
-const fetch = require("node-fetch");
+// netlify/functions/check-ip.js
 const fs = require("fs");
 const path = require("path");
 
@@ -29,9 +27,6 @@ function saveIpLog(ips) {
 }
 
 exports.handler = async function (event, context) {
-  const API_KEY = "ak_FWfDgcKCZyTDmGzCkMKtwrlFwo12VUHDnMO6N8KFwrPCn1QfPEnDgiFZwqHCk8Ks";
-  const TARGET_URL = "https://www.flexiquiz.com/SC/N/8e9790e3-ae28-46ef-9d08-a62e712f90fc";
-
   const ip = getClientIp(event.headers);
   const ipLog = loadIpLog();
 
@@ -42,52 +37,11 @@ exports.handler = async function (event, context) {
     };
   }
 
-  try {
-    const res = await fetch("https://scrt.link/api/v1/secrets", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${API_KEY}`
-      },
-      body: JSON.stringify({
-        content: TARGET_URL,
-        secretType: "redirect",
-        expiresIn: 86400000,
-        views: 1
-      })
-    });
+  ipLog.push(ip);
+  saveIpLog(ipLog);
 
-    const rawText = await res.text();
-    let result;
-
-    try {
-      result = JSON.parse(rawText);
-    } catch {
-      result = { raw: rawText };
-    }
-
-    if (!res.ok) {
-      return {
-        statusCode: res.status,
-        body: JSON.stringify({
-        error: "Failed to create secret",
-        status: res.status,
-        detail: result
-      })
-    };
-  }
-    
-    ipLog.push(ip);
-    saveIpLog(ipLog);
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ url: `https://scrt.link/s#${result.secretLink.split("#")[1]}` })
-    };
-  } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Server error", detail: err.message })
-    };
-  }
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ accessGranted: true })
+  };
 };
