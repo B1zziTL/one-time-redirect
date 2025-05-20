@@ -1,22 +1,35 @@
-<script type="module">
-  import { scrtLink } from "https://scrt.link/api/v1/client-module";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Test scrt.link</title>
+</head>
+<body>
+  <p id="message">Creating one-time link...</p>
+  <p id="output" style="word-break: break-all;"></p>
 
-  const API_KEY = "ak_FWfDgcKCZyTDmGzCkMKtwrlFwo12VUHDnMO6N8KFwrPCn1QfPEnDgiFZwqHCk8Ks";
-  const TARGET_URL = "https://www.flexiquiz.com/SC/N/8e9790e3-ae28-46ef-9d08-a62e712f90fc";
+  <script type="module">
+    import { scrtLink } from "https://scrt.link/api/v1/client-module";
 
-  const client = scrtLink(API_KEY);
+    const API_KEY = "ak_FWfDgcKCZyTDmGzCkMKtwrlFwo12VUHDnMO6N8KFwrPCn1QfPEnDgiFZwqHCk8Ks";
+    const TARGET_URL = "https://www.flexiquiz.com/SC/N/8e9790e3-ae28-46ef-9d08-a62e712f90fc";
 
-  try {
-    const result = await client.createSecret(encodeURIComponent(TARGET_URL), {
-      secretType: "redirect",
-      expiresIn: 86400000,
-      views: 1
-    });
+    const client = scrtLink(API_KEY);
 
-    window.location.href = result.url;
-  } catch (error) {
-    document.getElementById("message").textContent =
-      "Error generating redirect. Please try again later.";
-    console.error(error);
-  }
-</script>
+    try {
+      const result = await client.createSecret(TARGET_URL, {
+        secretType: "redirect",
+        expiresIn: 86400000,
+        views: 1
+      });
+
+      document.getElementById("message").textContent = "One-time link created!";
+      document.getElementById("output").innerHTML = `<a href="${result.url}" target="_blank">${result.url}</a>`;
+      console.log(result);
+    } catch (error) {
+      document.getElementById("message").textContent = "❌ Failed to create link.";
+      console.error(error);
+    }
+  </script>
+</body>
+</html>
