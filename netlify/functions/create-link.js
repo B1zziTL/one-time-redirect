@@ -1,33 +1,31 @@
+import fetch from "node-fetch";
+
 export async function handler(event, context) {
-  const API_KEY = "ak_FWfDgcKCZyTDmGzCkMKtwrlFwo12VUHDnMO6N8KFwrPCn1QfPEnDgiFZwqHCk8Ks";
+  const API_KEY = "ak_FWfDgcKCZyTDmGzCkMKtwrlFwo12VUHDnMO6N8KFwrPCn1QfPEnDgiFZwqHCk8Ks"; // from your scrt.link account
   const ORIGINAL_URL = "https://unique-flexiquiz-link.netlify.app";
 
   try {
-    const res = await fetch("https://www.scrt.link/api/create", {
+    const res = await fetch("https://scrt.link/api/v1/secrets", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${API_KEY}`
+        Authorization: `Bearer ${API_KEY}`
       },
       body: JSON.stringify({
-        type: "redirect",
         content: ORIGINAL_URL,
-        expireAfterViews: 1,
-        expireAfter: "1d"
+        secretType: "redirect",
+        expiresIn: 86400000,
+        views: 1
       })
     });
 
     if (!res.ok) {
-  const errorText = await res.text(); // capture full API response
-  return {
-    statusCode: res.status,
-    body: JSON.stringify({
-      error: "Failed to create scrt.link",
-      detail: errorText
-    })
-  };
-}
-
+      const errText = await res.text();
+      return {
+        statusCode: res.status,
+        body: JSON.stringify({ error: "scrt.link failed", detail: errText })
+      };
+    }
 
     const data = await res.json();
     return {
@@ -37,7 +35,11 @@ export async function handler(event, context) {
   } catch (err) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Server error" })
+      body: JSON.stringify({ error: "Server error", detail: err.message })
+    };
+  }
+}
+
     };
   }
 }
