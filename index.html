@@ -14,9 +14,7 @@
   const API_KEY = "ak_FWfDgcKCZyTDmGzCkMKtwrlFwo12VUHDnMO6N8KFwrPCn1QfPEnDgiFZwqHCk8Ks";
   const TARGET_URL = "https://www.flexiquiz.com/SC/N/8e9790e3-ae28-46ef-9d08-a62e712f90fc";
 
-  const client = scrtLink(API_KEY, {
-    baseUrl: "https://scrt.link"
-  });
+  const client = scrtLink(API_KEY);
 
   try {
     const result = await client.createSecret(TARGET_URL, {
@@ -25,14 +23,17 @@
       views: 1
     });
 
+    const fullLink = `https://scrt.link/s#${result.secretLink.split("#")[1]}`;
+
     document.getElementById("message").textContent = "One-time link created!";
-    document.getElementById("output").innerHTML = `<a href="${result.secretLink}" target="_blank">${result.secretLink}</a>`;
+    document.getElementById("output").innerHTML = `<a href="${fullLink}" target="_blank">${fullLink}</a>`;
     console.log(result);
   } catch (error) {
     document.getElementById("message").textContent = "❌ Failed to create link.";
     console.error(error);
   }
 </script>
+
 
 </body>
 </html>
