@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 
 exports.handler = async function (event, context) {
-  const API_KEY = "ak_FWfDgcKCZyTDmGzCkMKtwrlFwo12VUHDnMO6N8KFwrPCn1QfPEnDgiFZwqHCk8Ks"; // from your scrt.link account
+  const API_KEY = "ak_FWfDgcKCZyTDmGzCkMKtwrlFwo12VUHDnMO6N8KFwrPCn1QfPEnDgiFZwqHCk8Ks";
   const ORIGINAL_URL = "https://www.flexiquiz.com/SC/N/8e9790e3-ae28-46ef-9d08-a62e712f90fc";
 
   try {
@@ -38,8 +38,4 @@ exports.handler = async function (event, context) {
       body: JSON.stringify({ error: "Server error", detail: err.message })
     };
   }
-}
-
-    };
-  }
-}
+};
