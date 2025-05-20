@@ -3,7 +3,7 @@ export async function handler(event, context) {
   const ORIGINAL_URL = "https://unique-flexiquiz-link.netlify.app";
 
   try {
-    const res = await fetch("https://scrt.link/api/create", {
+    const res = await fetch("https://www.scrt.link/api/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
