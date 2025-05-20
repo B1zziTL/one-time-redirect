@@ -5,26 +5,47 @@
   <title>One-Time Redirect</title>
 </head>
 <body>
-  <p id="message">Preparing your secure link...</p>
+  <p id="message">Checking access...</p>
   <p id="output" style="word-break: break-all;"></p>
 
-  <script>
-  document.getElementById("message").textContent = "Checking access...";
+  <script type="module">
+    import { scrtLink } from "https://scrt.link/api/v1/client-module";
 
-  fetch("/.netlify/functions/generate")
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        document.getElementById("message").textContent = data.error || "Access denied.";
+    const API_KEY = "ak_FWfDgcKCZyTDmGzCkMKtwrlFwo12VUHDnMO6N8KFwrPCn1QfPEnDgiFZwqHCk8Ks";
+    const TARGET_URL = "https://www.flexiquiz.com/SC/N/8e9790e3-ae28-46ef-9d08-a62e712f90fc";
+
+    const messageEl = document.getElementById("message");
+    const outputEl = document.getElementById("output");
+
+    try {
+      // Step 1: Ask backend if this IP is allowed
+      const check = await fetch("/.netlify/functions/check-ip");
+      const access = await check.json();
+
+      if (!check.ok || !access.accessGranted) {
+        messageEl.textContent = access.error || "Access denied.";
+        throw new Error("IP check failed");
       }
-    })
-    .catch((err) => {
-      document.getElementById("message").textContent = "Server error.";
-      console.error(err);
-    });
-</script>
 
+      // Step 2: Generate one-time link
+      messageEl.textContent = "Generating your one-time link...";
+      const client = scrtLink(API_KEY);
+      const result = await client.createSecret(TARGET_URL, {
+        secretType: "redirect",
+        expiresIn: 86400000,
+        views: 1
+      });
+
+      const fullLink = `https://scrt.link/s#${result.secretLink.split("#")[1]}`;
+      messageEl.textContent = "✅ One-time link created!";
+      outputEl.innerHTML = `<a href="${fullLink}" target="_blank">${fullLink}</a>`;
+
+      // Optional: auto-redirect
+      // window.location.href = fullLink;
+    } catch (err) {
+      console.error(err);
+      messageEl.textContent = "❌ Something went wrong.";
+    }
+  </script>
 </body>
 </html>
